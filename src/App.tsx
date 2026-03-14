@@ -12,13 +12,16 @@ function App() {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {Object.values(positions).map((pos) => (
+      {Object.values(positions).map((pos) => pos.latitude && pos.longitude && (
         <Marker key={pos.mmsi} position={[pos.latitude, pos.longitude]} icon={new Icon({ iconUrl: 'boat.png', attribution: '&copy; <a href="https://www.flaticon.com/">FlatIcon.com</a>', iconSize: [25, 25] })}>
           <Popup>
+            {pos.vesselName && <>
+            {pos.vesselName}{pos.callsign && ` (${pos.callsign})`}<br />
+            {pos.destination && <>Destination: {pos.destination}<br /></>}</>}
             MMSI: {pos.mmsi}<br />
-            Heading: {pos.trueHeading}°<br />
-            Speed: {pos.speedOverGround} knots<br />
-            Timestamp: {new Date(pos.msgtime).toLocaleString()}<br />
+            {pos.trueHeading !== undefined && <>Heading: {pos.trueHeading}°<br /></>}
+            {pos.speedOverGround !== undefined && <>Speed: {pos.speedOverGround} knots<br /></>}
+            {pos.msgtime && <>Timestamp: {new Date(pos.msgtime).toLocaleString()}<br /></>}
           </Popup>
         </Marker>
       ))}

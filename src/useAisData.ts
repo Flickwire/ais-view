@@ -1,6 +1,18 @@
 import { fetchEventData } from "fetch-sse";
 import { useState, useEffect } from "react";
 
+type ShipData = {
+  mmsi: number,
+  latitude: number,
+  longitude: number,
+  trueHeading: number,
+  speedOverGround: number,
+  msgtime: string,
+  vesselName?: string,
+  callsign?: string,
+  destination?: string,
+}
+
 type AisMessage = {
   "type": string
   "messageType": number,
@@ -15,11 +27,15 @@ type AisMessage = {
   "trueHeading": number,
   "mmsi": number,
   "msgtime": string,
-  "stream": string
+  "stream": string,
+  "name"?: string,
+  "callSign"?: string,
+  "destination"?: string
 }
 
 export function useAisData() {
-  const [positions, setPositions] = useState<Record<number, AisMessage>>({});
+  const [positions, setPositions] = useState<Record<number, ShipData>>({});
+  const [named, setNamed] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     fetch('/api/auth').then(res => {
@@ -44,10 +60,18 @@ export function useAisData() {
             if (!event || !event.data) return;
             try {
               const data = JSON.parse(event.data) as AisMessage;
-              if ((data.messageType === 1 || data.messageType === 2 || data.messageType === 3) && data.latitude && data.longitude) {
+              if ((data.messageType === 1 || data.messageType === 2 || data.messageType === 3 || data.messageType === 18 || data.messageType === 27) && data.latitude && data.longitude) {
                 setPositions(prevPositions => {
                   const newPositions = { ...prevPositions };
                   newPositions[data.mmsi] = data;
+                  return newPositions;
+                });
+              } else if (data.messageType === 5 || data.messageType === 24) {
+                if (named[data.mmsi]) return; // Skip if we already have the name for this MMSI
+                setNamed(prev => ({ ...prev, [data.mmsi]: true })); // Mark this MMSI as having received name info
+                setPositions(prevPositions => {
+                  const newPositions = { ...prevPositions };
+                  newPositions[data.mmsi] = { ...newPositions[data.mmsi] || {}, vesselName: data.name, callsign: data.callSign, destination: data.destination };
                   return newPositions;
                 });
               }
