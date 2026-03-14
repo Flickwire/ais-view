@@ -63,7 +63,11 @@ export function useAisData() {
               if ((data.messageType === 1 || data.messageType === 2 || data.messageType === 3 || data.messageType === 18 || data.messageType === 27) && data.latitude && data.longitude) {
                 setPositions(prevPositions => {
                   const newPositions = { ...prevPositions };
-                  newPositions[data.mmsi] = data;
+                  if (prevPositions[data.mmsi]) {
+                    newPositions[data.mmsi] = { ...prevPositions[data.mmsi], ...data };
+                  } else { 
+                    newPositions[data.mmsi] = data;
+                  }
                   return newPositions;
                 });
               } else if (data.messageType === 5 || data.messageType === 24) {
