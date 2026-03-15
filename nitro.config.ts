@@ -4,6 +4,6 @@ export default defineNitroConfig({
   serverDir: "./server",
   runtimeConfig: {
     barentswatchClientId: "",
-    barentswatchClientSecret: ""
-  }
+    barentswatchClientSecret: "",
+  },
 });

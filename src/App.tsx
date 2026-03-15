@@ -1,10 +1,10 @@
 import "./App.css";
-import { Map } from "./Map";
+import { AISMap } from "./AISMap";
 
 function App() {
   return (
     <div className="App">
-      <Map />
+      <AISMap />
     </div>
   );
 }

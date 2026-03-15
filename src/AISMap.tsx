@@ -1,8 +1,8 @@
+import { Icon } from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import { useAisData } from "./useAisData";
-import { Icon } from "leaflet";
 
-export const Map = () => {
+export const AISMap = () => {
   const positions = useAisData();
   return (
     <MapContainer center={[65.76, 7.52]} zoom={5} className="map">
@@ -20,7 +20,8 @@ export const Map = () => {
               icon={
                 new Icon({
                   iconUrl: "boat.png",
-                  attribution: '&copy; <a href="https://www.flaticon.com/">FlatIcon.com</a>',
+                  attribution:
+                    '&copy; <a href="https://www.flaticon.com/">FlatIcon.com</a>',
                   iconSize: [25, 25],
                 })
               }
