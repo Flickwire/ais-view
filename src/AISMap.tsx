@@ -7,7 +7,7 @@ import { useHistory } from "./useHistory";
 export const AISMap = () => {
   const authToken = useAuth();
   const positions = useAisData(authToken);
-  const { setSelectedMmsi, history } = useHistory(authToken);
+  const { setSelectedMmsi, selectedMmsi, history } = useHistory(authToken);
   return (
     <MapContainer center={[65.76, 7.52]} zoom={5} className="map">
       <TileLayer
@@ -21,6 +21,7 @@ export const AISMap = () => {
             <Marker
               key={pos.mmsi}
               position={[pos.latitude, pos.longitude]}
+              opacity={selectedMmsi !== null && selectedMmsi !== pos.mmsi ? 0.2 : 1}
               icon={
                 new Icon({
                   iconUrl: "boat.png",
