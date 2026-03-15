@@ -42,10 +42,7 @@ export function useAisData() {
               }
               return newPositions;
             });
-          } else if (
-            data.messageType === 5 ||
-            data.messageType === 24
-          ) {
+          } else if (data.messageType === 5 || data.messageType === 24) {
             if (named[data.mmsi]) return; // Skip if we already have the name for this MMSI
             named[data.mmsi] = true; // Mark this MMSI as having received name info
             setPositions((prevPositions) => {
