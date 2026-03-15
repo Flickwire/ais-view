@@ -1,9 +1,13 @@
 import { Icon } from "leaflet";
-import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
+import { MapContainer, Marker, Polyline, Popup, TileLayer } from "react-leaflet";
 import { useAisData } from "./useAisData";
+import { useAuth } from "./useAuth";
+import { useHistory } from "./useHistory";
 
 export const AISMap = () => {
-  const positions = useAisData();
+  const authToken = useAuth();
+  const positions = useAisData(authToken);
+  const { setSelectedMmsi, history } = useHistory(authToken);
   return (
     <MapContainer center={[65.76, 7.52]} zoom={5} className="map">
       <TileLayer
@@ -25,6 +29,10 @@ export const AISMap = () => {
                   iconSize: [25, 25],
                 })
               }
+              eventHandlers={{
+                'popupopen': () => setSelectedMmsi(pos.mmsi),
+                'popupclose': () => setSelectedMmsi(null),
+              }}
             >
               <Popup>
                 {pos.vesselName && (
@@ -62,6 +70,13 @@ export const AISMap = () => {
               </Popup>
             </Marker>
           ),
+      )}
+      {history.length > 0 && (
+        <Polyline
+          positions={history}
+          color="blue"
+          weight={2}
+        />
       )}
     </MapContainer>
   );
