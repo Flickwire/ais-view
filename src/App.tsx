@@ -1,10 +1,13 @@
+import { AISContextProvider } from "./hooks/AISContext";
 import "./App.css";
-import { AISMap } from "./AISMap";
+import { AISMap } from "./components/AISMap";
 
 function App() {
   return (
     <div className="App">
-      <AISMap />
+      <AISContextProvider>
+        <AISMap />
+      </AISContextProvider>
     </div>
   );
 }

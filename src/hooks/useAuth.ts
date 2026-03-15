@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useAISContext } from "./AISContext";
 
 export const useAuth = () => {
-  const [token, setToken] = useState<string | null>(null);
-  
+  const { setAuthToken, setAuthTokenExpiry } = useAISContext();
   useEffect(() => {
     fetch("/api/auth")
       .then((res) => {
@@ -13,14 +13,17 @@ export const useAuth = () => {
         res
           .json()
           .then((data) => {
-            const { access_token } = data as unknown as {
+            const { access_token, expires_in } = data as unknown as {
               access_token: string;
+              expires_in: number;
             };
             if (!access_token) {
               console.error("No access token received");
               return;
             }
-            setToken(access_token);
+            setAuthToken(access_token);
+            const expiryDate = new Date(Date.now() + expires_in * 1000);
+            setAuthTokenExpiry(expiryDate);
           })
           .catch((err) => {
             console.error("Error parsing auth response:", err);
@@ -29,7 +32,5 @@ export const useAuth = () => {
       .catch((err) => {
         console.error("Error fetching auth token:", err);
       });
-  }, []);
-  
-  return token;
+  }, [setAuthToken, setAuthTokenExpiry]);
 };

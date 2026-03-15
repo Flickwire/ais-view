@@ -1,39 +1,10 @@
 import { fetchEventData } from "fetch-sse";
 import { useEffect, useState } from "react";
+import type { AisMessage, ShipData } from "../types";
+import { useAISContext } from "./AISContext";
 
-type ShipData = {
-  mmsi: number;
-  latitude: number;
-  longitude: number;
-  trueHeading: number;
-  speedOverGround: number;
-  msgtime: string;
-  vesselName?: string;
-  callsign?: string;
-  destination?: string;
-};
-
-type AisMessage = {
-  type: string;
-  messageType: number;
-  courseOverGround: number;
-  aisClass: string;
-  altitude: number;
-  latitude: number;
-  longitude: number;
-  navigationalStatus: number;
-  rateOfTurn: number;
-  speedOverGround: number;
-  trueHeading: number;
-  mmsi: number;
-  msgtime: string;
-  stream: string;
-  name?: string;
-  callSign?: string;
-  destination?: string;
-};
-
-export function useAisData(authToken: string | null) {
+export function useAisData() {
+  const { authToken } = useAISContext();
   const [positions, setPositions] = useState<Record<number, ShipData>>({});
 
   useEffect(() => {

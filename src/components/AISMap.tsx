@@ -1,13 +1,15 @@
 import { Icon } from "leaflet";
 import { MapContainer, Marker, Polyline, Popup, TileLayer } from "react-leaflet";
-import { useAisData } from "./useAisData";
-import { useAuth } from "./useAuth";
-import { useHistory } from "./useHistory";
+import { useAISContext } from "../hooks/AISContext";
+import { useAisData } from "../hooks/useAisData";
+import { useAuth } from "../hooks/useAuth";
+import { useHistory } from "../hooks/useHistory";
 
 export const AISMap = () => {
-  const authToken = useAuth();
-  const positions = useAisData(authToken);
-  const { setSelectedMmsi, selectedMmsi, history } = useHistory(authToken);
+  const { history, selectedMMSI, setSelectedMMSI } = useAISContext();
+  useAuth();
+  useHistory();
+  const positions = useAisData();
   return (
     <MapContainer center={[65.76, 7.52]} zoom={5} className="map">
       <TileLayer
@@ -21,7 +23,7 @@ export const AISMap = () => {
             <Marker
               key={pos.mmsi}
               position={[pos.latitude, pos.longitude]}
-              opacity={selectedMmsi !== null && selectedMmsi !== pos.mmsi ? 0.2 : 1}
+              opacity={selectedMMSI !== null && selectedMMSI !== pos.mmsi ? 0.2 : 1}
               icon={
                 new Icon({
                   iconUrl: "boat.png",
@@ -31,8 +33,8 @@ export const AISMap = () => {
                 })
               }
               eventHandlers={{
-                'popupopen': () => setSelectedMmsi(pos.mmsi),
-                'popupclose': () => setSelectedMmsi(null),
+                'popupopen': () => setSelectedMMSI(pos.mmsi),
+                'popupclose': () => setSelectedMMSI(null),
               }}
             >
               <Popup>
