@@ -35,7 +35,6 @@ type AisMessage = {
 
 export function useAisData() {
   const [positions, setPositions] = useState<Record<number, ShipData>>({});
-  const [named, setNamed] = useState<Record<number, boolean>>({});
 
   useEffect(() => {
     fetch('/api/auth').then(res => {
@@ -45,6 +44,7 @@ export function useAisData() {
       }
       res.json().then(data => {
         const { access_token } = data as unknown as { access_token: string };
+        const named: Record<number, boolean> = {}; // Track which MMSIs have received name info
         if (!access_token) {
           console.error('No access token received');
           return;
@@ -72,7 +72,7 @@ export function useAisData() {
                 });
               } else if (data.messageType === 5 || data.messageType === 24) {
                 if (named[data.mmsi]) return; // Skip if we already have the name for this MMSI
-                setNamed(prev => ({ ...prev, [data.mmsi]: true })); // Mark this MMSI as having received name info
+                named[data.mmsi] = true; // Mark this MMSI as having received name info
                 setPositions(prevPositions => {
                   const newPositions = { ...prevPositions };
                   newPositions[data.mmsi] = { ...newPositions[data.mmsi] || {}, vesselName: data.name, callsign: data.callSign, destination: data.destination };
