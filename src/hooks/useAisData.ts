@@ -14,9 +14,6 @@ export function useAisData() {
       headers: {
         authorization: `Bearer ${authToken}`,
       },
-      onOpen: () => {
-        console.log("SSE connection opened");
-      },
       onMessage: (event) => {
         if (!event || !event.data) return;
         try {
@@ -59,9 +56,6 @@ export function useAisData() {
         } catch (error) {
           console.error("Error parsing AIS data:", error);
         }
-      },
-      onClose: () => {
-        console.log("SSE connection closed");
       },
       onError: (error) => {
         console.error("SSE error:", error);

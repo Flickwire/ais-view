@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import type { Position } from "../types";
+import { useAuth } from "./useAuth";
 
 type AISContextType = {
   selectedMMSI: number | null;
@@ -7,9 +8,7 @@ type AISContextType = {
   history: Position[];
   setHistory: (history: Position[]) => void;
   authToken: string | null;
-  setAuthToken: (token: string | null) => void;
   authTokenExpiry: Date | null;
-  setAuthTokenExpiry: (date: Date | null) => void;
 };
 
 const AISContext = createContext<AISContextType>({
@@ -17,10 +16,8 @@ const AISContext = createContext<AISContextType>({
   history: [],
   authToken: null,
   authTokenExpiry: null,
-  setSelectedMMSI: () => {},
-  setHistory: () => {},
-  setAuthToken: () => {},
-  setAuthTokenExpiry: () => {},
+  setSelectedMMSI: () => { },
+  setHistory: () => { },
 });
 export const AISContextProvider = ({
   children,
@@ -29,8 +26,7 @@ export const AISContextProvider = ({
 }) => {
   const [selectedMMSI, setSelectedMMSI] = useState<number | null>(null);
   const [history, setHistory] = useState<Position[]>([]);
-  const [authToken, setAuthToken] = useState<string | null>(null);
-  const [authTokenExpiry, setAuthTokenExpiry] = useState<Date | null>(null);
+  const { authToken, authTokenExpiry } = useAuth();
   return (
     <AISContext.Provider
       value={{
@@ -39,9 +35,7 @@ export const AISContextProvider = ({
         history,
         setHistory,
         authToken,
-        setAuthToken,
         authTokenExpiry,
-        setAuthTokenExpiry,
       }}
     >
       {children}

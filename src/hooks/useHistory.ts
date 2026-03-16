@@ -3,11 +3,17 @@ import type { HistoryDataPoint } from "../types";
 import { useAISContext } from "./AISContext";
 
 export const useHistory = () => {
-  const { authToken, selectedMMSI, setHistory } = useAISContext();
+  const { authToken, selectedMMSI, setHistory, history } = useAISContext();
 
   useEffect(() => {
-    if (selectedMMSI === null) setHistory([]);
-    if (!authToken) return;
+    if (selectedMMSI === null) {
+      setHistory([]);
+      return;
+    }
+    if (!authToken) {
+      setHistory([]);
+      return;
+    }
     fetch(
       `https://historic.ais.barentswatch.no/v1/historic/trackslast24hours/${selectedMMSI}?modelFormat=Json`,
       {
@@ -27,5 +33,5 @@ export const useHistory = () => {
       )
       .catch((error) => console.error("Error fetching history:", error));
   }, [selectedMMSI, authToken, setHistory]);
-  return {};
+  return history;
 };

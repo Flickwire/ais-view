@@ -1,8 +1,8 @@
-import { useEffect } from "react";
-import { useAISContext } from "./AISContext";
+import { useEffect, useState } from "react";
 
 export const useAuth = () => {
-  const { setAuthToken, setAuthTokenExpiry } = useAISContext();
+  const [authToken, setAuthToken] = useState<string | null>(null);
+  const [authTokenExpiry, setAuthTokenExpiry] = useState<Date | null>(null);
   useEffect(() => {
     fetch("/api/auth")
       .then((res) => {
@@ -32,5 +32,6 @@ export const useAuth = () => {
       .catch((err) => {
         console.error("Error fetching auth token:", err);
       });
-  }, [setAuthToken, setAuthTokenExpiry]);
+  }, []);
+  return { authToken, authTokenExpiry };
 };
